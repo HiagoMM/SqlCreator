@@ -1,4 +1,4 @@
-package br;
+package br.com.hiagomarques.sqlCreator;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

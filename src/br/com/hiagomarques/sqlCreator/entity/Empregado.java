@@ -1,7 +1,10 @@
-package br.entity;
+package br.com.hiagomarques.sqlCreator.entity;
+
+import br.com.hiagomarques.sqlCreator.anotations.Id;
 
 public class Empregado {
 	
+	@Id
 	private Long id;
 	private String nome;
 	private String sobrenome; 
@@ -38,7 +41,5 @@ public class Empregado {
 	public void setMatricula(Integer matricula) {
 		this.matricula = matricula;
 	}
-	
-	
-	
+
 }
