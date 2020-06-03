@@ -37,7 +37,7 @@ public class SqlCreator {
 			}
 		}
 		query += ")";
-		System.out.println(query);
+
 		return query;
 	}
 
@@ -46,9 +46,7 @@ public class SqlCreator {
 		if (where == null || where.trim().length() == 0) {
 			throw new SQLException("Ta ficando doido bixo");
 		}
-		query = query + " where " + where;
-		System.out.println(query);
-		return query;
+		return query + " where " + where;
 	}
 
 	public static String generateUpdate(Class<? extends Object> reflected) throws SQLException {
@@ -72,9 +70,8 @@ public class SqlCreator {
 		if (where == null || where.trim().length() == 0) {
 			throw new SQLException("Ta ficando doido bixo");
 		}
-		query = query + " where " + where;
-		System.out.println(query);
-		return query;
+		return query + " where " + where;
+
 	}
 
 	public static String generateDelete(Class<? extends Object> reflected) throws SQLException {
@@ -84,9 +81,11 @@ public class SqlCreator {
 
 	public static String generateSelect(Class<? extends Object> reflected) {
 		String[] arrayName = reflected.getName().replace(".", "#").split("#");
-		String query = "select * from " + arrayName[arrayName.length - 1];
-		System.out.println(query);
-		return query;
+		return  "select * from " + arrayName[arrayName.length - 1];
+	}
+
+	public static String generateSelect(Class<? extends Object> reflected, String where) {
+		return generateSelect(reflected) + " where " + where;
 	}
 
 }

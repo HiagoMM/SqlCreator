@@ -3,6 +3,7 @@ package br.com.hiagomarques.sqlCreator.reflection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,8 @@ public class StatementCreator<T> {
 	}
 
 	public PreparedStatement generateStatement(T obj, String sql) throws SQLException {
-		PreparedStatement prst = conn.prepareStatement(sql);
+		System.out.println(sql);
+		PreparedStatement prst = conn.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
 		Class<? extends Object> reflected = obj.getClass();
 
 		return fillStatement(sql, prst, Arrays.stream(reflected.getMethods())

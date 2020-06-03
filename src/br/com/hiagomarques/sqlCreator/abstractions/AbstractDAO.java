@@ -1,29 +1,26 @@
-package br.com.hiagomarques.sqlCreator;
+package br.com.hiagomarques.sqlCreator.abstractions;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
-
-import br.com.hiagomarques.sqlCreator.anotations.Id;
 import br.com.hiagomarques.sqlCreator.reflection.SqlCreator;
 import br.com.hiagomarques.sqlCreator.reflection.StatementCreator;
 import br.com.hiagomarques.sqlCreator.util.Util;
 
 public abstract class AbstractDAO<T extends Object, ID> {
 
-	StatementCreator<T> stg;
+	private StatementCreator<T> stg;
 
 	public AbstractDAO(Connection conn) {
 		super();
 		stg = new StatementCreator<T>(conn);
 	}
 
-	public List<T> getAll() throws Exception {
+	public List<T> findAll() throws Exception {
 		T obj = getObj();
 		String sql = SqlCreator.generateSelect(obj.getClass());
 		PreparedStatement st = stg.generateStatement(obj, sql);
@@ -31,24 +28,38 @@ public abstract class AbstractDAO<T extends Object, ID> {
 		List<String> fields = Util.getAllNamesFromClass(obj.getClass());
 		return Util.resultSetFiler(obj, result, fields);
 	}
+	public T findById(ID id) throws Exception{
+		T obj = getObj();
+		Field idField = Util.idField(obj);
+		String sql = SqlCreator.generateSelect(obj.getClass(), idField.getName() + " = " + id) ;
+		PreparedStatement st = stg.generateStatement(obj, sql);
+		ResultSet result = st.executeQuery();
+		List<String> fields = Util.getAllNamesFromClass(obj.getClass());
+		try {
+			return Util.resultSetFiler(obj, result, fields).get(0);
+		} catch(Exception e) {
+			throw new RuntimeException(idField.getName()+" não encontrado");
+		}
+	}
 
-	
-
-	public void save(T obj) throws SQLException {
+	public T save(T obj) throws Exception {
 		String sql = "";
+		Field filId = Util.idField(obj);
 		if (isUpdate(obj)) {
-			sql = SqlCreator.generateUpdate(obj.getClass(), "id = " + idValue(obj));
+			sql = SqlCreator.generateUpdate(obj.getClass(), filId.getName() + " = " + filId.get(obj));
 		} else {
 			sql = SqlCreator.generateInsert(obj.getClass());
 		}
 		PreparedStatement st = stg.generateStatement(obj, sql);
 		st.execute();
+		T result = Util.resultSetFiler(obj, st.getGeneratedKeys(), Arrays.asList(filId.getName())).get(0);
+		return Util.copyFields(result, obj, obj.getClass());
 	}
 
-	public void delete(ID id) throws SQLException {
+	public void delete(ID id) throws Exception {
 		T obj = getObj();
-
-		stg.generateStatement(obj, SqlCreator.generateDelete(obj.getClass(), "id = " + id)).execute();
+		Field filId = Util.idField(obj);
+		stg.generateStatement(obj, SqlCreator.generateDelete(obj.getClass(), filId.getName()+" = " + id)).execute();
 	}
 
 	private T getObj() {
@@ -64,22 +75,10 @@ public abstract class AbstractDAO<T extends Object, ID> {
 		return obj;
 	}
 
-	private boolean isUpdate(T obj) {
-		Object fieldValue = idValue(obj);
+	private boolean isUpdate(T obj) throws Exception {
+		Object fieldValue = Util.idField(obj).get(obj);
 		return fieldValue != null;
 	}
 
-	private Object idValue(T obj) {
-		Object fieldValue = null;
-		try {
-			Field field = Stream.of(obj.getClass().getDeclaredFields())
-					.filter(fil -> fil.getAnnotation(Id.class) != null).findFirst()
-					.orElseThrow(() -> new RuntimeException("Id não encontrado"));
-			field.setAccessible(true);
-			fieldValue = field.get(obj);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return fieldValue;
-	}
+
 }

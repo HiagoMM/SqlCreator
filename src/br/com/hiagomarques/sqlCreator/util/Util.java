@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import br.com.hiagomarques.sqlCreator.anotations.Id;
+
 public class Util {
 
 	public static List<String> getNamesFromSql(String sql) {
@@ -64,4 +66,26 @@ public class Util {
 		}
 		return objs;
 	}
+	public static <T> T copyFields(T entity, T newEntity, Class<?> clazz) throws IllegalAccessException {
+	    List<Field> fields = new ArrayList<>();
+	    for (Field field : clazz.getDeclaredFields()) {
+	        fields.add(field);
+	    }
+	    for (Field field : fields) {
+	        field.setAccessible(true);
+	        if ( field.get(entity) != null ) {
+	        	field.set(newEntity, field.get(entity));
+	        }
+	    }
+	    return newEntity;
+	}
+	public static<T> Field idField(T obj) throws Exception {
+		Field field = Stream.of(obj.getClass().getDeclaredFields())
+				.filter(fil -> fil.getAnnotation(Id.class) != null).findFirst()
+				.orElseThrow(() -> new RuntimeException("Id não encontrado"));
+		field.setAccessible(true);
+	
+	return field;
+	
+}
 }
