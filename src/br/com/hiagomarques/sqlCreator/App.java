@@ -8,18 +8,18 @@ import br.com.hiagomarques.sqlCreator.entity.Empregado;
 public class App {
 
 	public static void main(String[] args) throws SQLException {
+		
 		Connection conn = ConnectionManager.get();
-
 		Empregado obj = new Empregado();
-		obj.setId(1l);
-		obj.setIdade(18);
+		
+		obj.setIdade(19);
 		obj.setMatricula(1213);
-		obj.setNome("Hiago");
+		obj.setNome("Jujubinha");
 		obj.setSobrenome(":)");
 		
 		EmpregadoDao emp = new EmpregadoDao(conn);
 		emp.save(obj);
-		emp.delete(2l);
+		
 
 //		SqlCreator.generateInsert(obj);
 //		SqlCreator.generateDelete(obj, "nome = ?");

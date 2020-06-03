@@ -59,7 +59,6 @@ public class StatementCreator<T> {
 			} while (sql.indexOf(" = ?", start + 1) != -1);
 		}
 		arr = arr.stream().map(String::trim).collect(Collectors.toList());
-		System.out.println(map.get("id"));
 		for (int i = 0; i < arr.size(); i++) {
 			String key = arr.get(i);
 			Object value = "null".equals(map.get(key)) ? null : map.get(key);
