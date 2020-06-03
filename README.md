@@ -1,6 +1,4 @@
-# SqlCreator
-
-## Class
+### Class
 
 ```java
   class Empregado{
@@ -29,7 +27,9 @@
 	}
 }
 ```
-## DAO
+## AbstractDao
+
+### DAO
 
 ```java
 class EmpregadoDao extends AbstractDAO<Empregado, Long>{
@@ -42,7 +42,7 @@ class EmpregadoDao extends AbstractDAO<Empregado, Long>{
 	
 }
 ```
-## And lets use
+### And lets use
 
 ```java
 public static void main(String[] args) throws Exception {
@@ -57,4 +57,20 @@ public static void main(String[] args) throws Exception {
 		empDao.findById(1l); // read by id
 		empDao.delete(1l); //delete by id
 	}
-  ```
+```
+## SqlGenerator
+### Examples
+```java
+ public static void main(String[] args) throws Exception {
+	
+		SqlCreator.generateInsert(Empregado.class);
+		SqlCreator.generateDelete(Empregado.class);
+		SqlCreator.generateUpdate(Empregado.class);
+		SqlCreator.generateSelect(Empregado.class);
+		
+		SqlCreator.generateInsert(Empregado.class);
+		SqlCreator.generateDelete(Empregado.class,"id = 1");
+		SqlCreator.generateUpdate(Empregado.class,"id = 1");
+		SqlCreator.generateSelect(Empregado.class,"id = 1");
+	}
+```
