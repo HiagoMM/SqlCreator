@@ -14,11 +14,12 @@ public class App {
 		obj.setId(1l);
 		obj.setIdade(18);
 		obj.setMatricula(1213);
-		obj.setNome("Jujuba");
+		obj.setNome("Hiago");
 		obj.setSobrenome(":)");
 		
 		EmpregadoDao emp = new EmpregadoDao(conn);
 		emp.save(obj);
+		emp.delete(2l);
 
 //		SqlCreator.generateInsert(obj);
 //		SqlCreator.generateDelete(obj, "nome = ?");
