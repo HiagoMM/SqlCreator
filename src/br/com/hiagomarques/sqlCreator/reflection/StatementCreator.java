@@ -3,11 +3,12 @@ package br.com.hiagomarques.sqlCreator.reflection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import br.com.hiagomarques.sqlCreator.util.Util;
 
 public class StatementCreator<T> {
 
@@ -35,30 +36,7 @@ public class StatementCreator<T> {
 
 	private PreparedStatement fillStatement(String sql, PreparedStatement prst, Map<Object, Object> map)
 			throws SQLException {
-
-		List<String> arr = new ArrayList<>();
-		if (sql.toLowerCase().startsWith("insert")) {
-			arr = Arrays.asList(
-					sql.substring(sql.indexOf("("), sql.indexOf(")")).replace("(", "").replace(")", "").split(","));
-		} else {
-			int start = 0;
-			do {
-				start = sql.indexOf(" = ?", start + 1);
-				String palavra = "";
-				for (int i = start; i > 0; i--) {
-					char letra = sql.charAt(i - 1);
-					if (" ".equals(String.valueOf(letra))) {
-						break;
-					}
-					palavra = letra + palavra;
-				}
-				if (start != -1) {
-					arr.add(palavra);
-				}
-
-			} while (sql.indexOf(" = ?", start + 1) != -1);
-		}
-		arr = arr.stream().map(String::trim).collect(Collectors.toList());
+		List<String> arr = Util.getNamesFromSql(sql);
 		for (int i = 0; i < arr.size(); i++) {
 			String key = arr.get(i);
 			Object value = "null".equals(map.get(key)) ? null : map.get(key);
@@ -67,5 +45,6 @@ public class StatementCreator<T> {
 
 		return prst;
 	}
+
 
 }

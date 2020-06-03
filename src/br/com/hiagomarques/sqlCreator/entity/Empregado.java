@@ -11,6 +11,8 @@ public class Empregado {
 	private Integer idade;
 	private Integer matricula;
 	
+	
+	
 	public Long getId() {
 		return id;
 	}
@@ -41,5 +43,11 @@ public class Empregado {
 	public void setMatricula(Integer matricula) {
 		this.matricula = matricula;
 	}
+	@Override
+	public String toString() {
+		return "Empregado [id=" + id + ", nome=" + nome + ", sobrenome=" + sobrenome + ", idade=" + idade
+				+ ", matricula=" + matricula + "]";
+	}
+	
 
 }
